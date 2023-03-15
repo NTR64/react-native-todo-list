@@ -1,45 +1,37 @@
 import { useState } from "react";
 import {
   Button,
-  ScrollView,
+  FlatList,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
+import GoalInput from "./components/GoalInput";
+import GoalItem from "./components/GoalItem";
 
 export default function App() {
-  const [inputValue, setInputValue] = useState("");
   const [goals, setGoals] = useState([]);
 
-  const handleInput = (e) => {
-    setInputValue(e);
-  };
-
-  const handleAddClick = () => {
+  const onAddGoal = (inputValue) => {
     if (inputValue.length > 0) {
-      setGoals((currentGoals) => [...currentGoals, inputValue]);
+      setGoals((currentGoals) => [
+        ...currentGoals,
+        { text: inputValue, id: Math.random().toString() },
+      ]);
     }
   };
 
   return (
     <View style={styles.appContainer}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Your goals"
-          style={styles.textInput}
-          onChangeText={handleInput}
-        />
-        <Button title="Add Goal" onPress={handleAddClick} />
-      </View>
+      <GoalInput onAddGoal={onAddGoal} />
       <View style={styles.listContainer}>
-        <ScrollView alwaysBounceVertical={false}>
-          {goals.map((goal, i) => (
-            <View key={goal + i} style={styles.listItem}>
-              <Text>{goal}</Text>
-            </View>
-          ))}
-        </ScrollView>
+        <FlatList
+          data={goals}
+          renderItem={(itemData) => <GoalItem text={itemData.item.text} />}
+          keyExtractor={(item, i) => item.id}
+          alwaysBounceVertical={false}
+        />
       </View>
     </View>
   );
@@ -51,29 +43,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingHorizontal: 16,
   },
-  inputContainer: {
-    height: 100,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    marginBottom: 24,
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    flexGrow: 1,
-    marginRight: 8,
-    padding: 8,
-  },
   listContainer: {
     flex: 1,
-  },
-  listItem: {
-    backgroundColor: "#ccc",
-    marginBottom: 16,
-    padding: 8,
-    borderRadius: 8,
   },
 });
