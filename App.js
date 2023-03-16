@@ -13,7 +13,7 @@ import GoalItem from "./components/GoalItem";
 export default function App() {
   const [goals, setGoals] = useState([]);
 
-  const onAddGoal = (inputValue) => {
+  const handleAddGoal = (inputValue) => {
     if (inputValue.length > 0) {
       setGoals((currentGoals) => [
         ...currentGoals,
@@ -22,13 +22,25 @@ export default function App() {
     }
   };
 
+  const handleRemoveGoal = (id) => {
+    setGoals((currentGoals) => {
+      return currentGoals.filter((goal) => goal.id !== id);
+    });
+  };
+
   return (
     <View style={styles.appContainer}>
-      <GoalInput onAddGoal={onAddGoal} />
+      <GoalInput onAddGoal={handleAddGoal} />
       <View style={styles.listContainer}>
         <FlatList
           data={goals}
-          renderItem={(itemData) => <GoalItem text={itemData.item.text} />}
+          renderItem={(itemData) => (
+            <GoalItem
+              text={itemData.item.text}
+              id={itemData.item.id}
+              onRemoveGoal={handleRemoveGoal}
+            />
+          )}
           keyExtractor={(item, i) => item.id}
           alwaysBounceVertical={false}
         />
